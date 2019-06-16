@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,6 +17,8 @@ namespace MKHOOK
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.MenuItem menuItem4;
+        private System.Windows.Forms.MenuItem menuItem5;
         private Label label1;
         private TextBox textBox1;
         private Button button1;
@@ -27,18 +30,22 @@ namespace MKHOOK
 
         public App(Events events)
         {
-            CreateNotifyicon();
+            CreateNotifyicon();         
             this.events = events;
             alarm = new AlarmForm(events);
+            
         }
 
         private void CreateNotifyicon()
         {
+
             this.components = new System.ComponentModel.Container();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
+            this.menuItem4 = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
 
             // Initialize menuItem1
             this.menuItem1.Index = 0;
@@ -52,8 +59,18 @@ namespace MKHOOK
 
             // Initialize menuItem3
             this.menuItem3.Index = 0;
-            this.menuItem3.Text = "Exit";
+            this.menuItem3.Text = "Train the model";
             this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
+
+            // Initialize menuItem4
+            this.menuItem4.Index = 0;
+            this.menuItem4.Text = "Classification";
+            this.menuItem4.Click += new System.EventHandler(this.menuItem4_Click);
+
+            // Initialize menuItem5
+            this.menuItem5.Index = 0;
+            this.menuItem5.Text = "Exit";
+            this.menuItem5.Click += new System.EventHandler(this.menuItem5_Click);
 
 
             // Initialize contextMenu1
@@ -67,6 +84,14 @@ namespace MKHOOK
             // Initialize contextMenu3
             this.contextMenu1.MenuItems.AddRange(
                         new System.Windows.Forms.MenuItem[] { this.menuItem3 });
+
+            // Initialize contextMenu4
+            this.contextMenu1.MenuItems.AddRange(
+                        new System.Windows.Forms.MenuItem[] { this.menuItem4 });
+
+            // Initialize contextMenu5
+            this.contextMenu1.MenuItems.AddRange(
+                        new System.Windows.Forms.MenuItem[] { this.menuItem5 });
 
             // Create the NotifyIcon.
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
@@ -115,7 +140,30 @@ namespace MKHOOK
 
         private void menuItem3_Click(object Sender, EventArgs e)
         {
+            SentimentClassifier sentiment = new SentimentClassifier();
+            Thread th1 = new Thread(new ThreadStart(sentiment.trainClassifier));
+            th1.Start();
+            th1.Join();
+
+        }
+
+        private void menuItem4_Click(object Sender, EventArgs e)
+        {
             // Close the form, which closes the application.
+            SentimentClassifier sentiment = new SentimentClassifier();
+            Thread th1 = new Thread(new ThreadStart(sentiment.trainedClassifier));
+            th1.Start();
+            th1.Join();
+
+        }
+
+        private void menuItem5_Click(object Sender, EventArgs e)
+        {
+            // Close the form, which closes the application.
+            SentimentClassifier sentiment = new SentimentClassifier();
+            Thread th1 = new Thread(new ThreadStart(sentiment.trainedClassifier));
+            th1.Start();
+            th1.Join();
             Application.Exit();
 
         }
@@ -197,10 +245,11 @@ namespace MKHOOK
         [STAThread]
         private static void Main()
         {
-            Events events;
+            Events events; 
             events = new Events();
             App app = new App(events);
             Application.Run(events);
         }
-    }
+
+    } 
 }

@@ -7,7 +7,7 @@ using System.Web.Script.Serialization;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-//¿Números y caracteres especiales no importan no?
+
 namespace MKHOOK
 {
     public class Events : Form
@@ -74,7 +74,7 @@ namespace MKHOOK
                 {
                     firstTime = false;
                     string fileName = "infoActivity-" + DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss") + ".json";
-                    pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\Debug", fileName);
+                    pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug", fileName);
                     using (System.IO.FileStream fs = System.IO.File.Create(pathString))
                     { }
                     Console.WriteLine("Path to my file: {0}\n", pathString);

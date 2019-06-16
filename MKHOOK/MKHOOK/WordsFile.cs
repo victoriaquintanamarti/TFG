@@ -17,8 +17,7 @@ namespace MKHOOK
         public WordsFile(Events events)
         {
             this.events = events;
-            string fileName = "words-" + DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss") + ".json";
-            pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\Debug", fileName);
+            pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\words.txt");
             using (System.IO.FileStream fs = System.IO.File.Create(pathString))
             { }
         }
@@ -34,10 +33,16 @@ namespace MKHOOK
             } else if (newWords == "Return")
             {
                 words = words + "\r\n";
+            } else if (newWords == "Oem7" || newWords == "Oem1" || newWords == "OemQuestion")
+            {    
+            } else if (newWords == "Oemtilde"){
+                words = words + "Ñ";
+            } else if (newWords == "OemPeriod"){
+                words = words + "\r\n";
             }
             else if (newWords.Length > 1)
             {
-                specialCharacters++;
+                Console.WriteLine(newWords);
             }
             else
             {
