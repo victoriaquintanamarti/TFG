@@ -7,9 +7,26 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
 
 namespace MKHOOK
 {
+    /// <summary>
+    /// Clase principal que orquesta todas las funciones que realiza el programa. Cuando se ejecuta, aparece un icono 
+    /// de notificación en la barrra de tareas, la cual indica que el programa se está ejecutando en background. Una vez el 
+    /// programa se esté ejecutando, se estarán recogiendo todos los parámetros para poder detectar si se está produciendo alguna
+    /// anomalía en el comportamiento del usuario. 
+    /// Dependiendo de la opción que se escoja cuando se pulse en el icono de notificación, se podrán realizar las acciones siguientes:
+    /// - Config: al pulsar en esta opción se desplegará un formulario en el que se podrá cambiar
+    /// cada cuanto quiere que se realice el muestreo de ratón y de teclado en general.
+    /// - Alarm: si se escoge esta opción, se desplegará un formulario que contiene un resumen con los parámetros 
+    /// que se están midiendo en cada momento y en donde se establece el valor que puede tomar 
+    /// cada parámetro para considerarse anómalo. 
+    /// Cuando algún parámetro tome el valor que se ha puesto como anómalo se pondrá en rojo. 
+    /// En cambio si no es anómalo, aparecerá de color verde.
+    /// - Train the model: 
+    /// </summary>
     class App : Form
     {
         private System.Windows.Forms.NotifyIcon notifyIcon1;
@@ -25,20 +42,25 @@ namespace MKHOOK
         private System.ComponentModel.IContainer components;
         private Label label2;
         private TextBox textBox2;
-        private Events events;
+        private Events events1;
         private AlarmForm alarm;
+        public event System.Windows.Forms.FormClosingEventHandler FormClosing;
 
         public App(Events events)
         {
-            CreateNotifyicon();         
-            this.events = events;
-            alarm = new AlarmForm(events);
-            
+            events1 = events;
+            CreateNotifyicon();
+            alarm = new AlarmForm(events1);
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                run_cmd();
+            }).Start();
+            Console.WriteLine("Python Starting");
         }
 
         private void CreateNotifyicon()
         {
-
             this.components = new System.ComponentModel.Container();
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
@@ -112,7 +134,6 @@ namespace MKHOOK
             /*// Handle the DoubleClick event to activate the form.
             notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
             notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);*/
-
         }
         /*
         private void notifyIcon1_Click(object Sender, EventArgs e)
@@ -131,7 +152,6 @@ namespace MKHOOK
             InitializeComponent();
             this.Show();
         }
-
         private void menuItem2_Click(object Sender, EventArgs e)
         {
             // Close the form, which closes the application.
@@ -149,7 +169,6 @@ namespace MKHOOK
 
         private void menuItem4_Click(object Sender, EventArgs e)
         {
-            // Close the form, which closes the application.
             SentimentClassifier sentiment = new SentimentClassifier();
             Thread th1 = new Thread(new ThreadStart(sentiment.trainedClassifier));
             th1.Start();
@@ -165,7 +184,6 @@ namespace MKHOOK
             th1.Start();
             th1.Join();
             Application.Exit();
-
         }
 
         private void InitializeComponent()
@@ -238,8 +256,24 @@ namespace MKHOOK
         private void button1_Click(object sender, EventArgs e)
         {
             this.Hide();
-            events.setTime(textBox1.Text);
-            events.setTimeMouse(textBox2.Text);
+            events1.setTime(textBox1.Text);
+            events1.setTimeMouse(textBox2.Text);
+        }
+        public void run_cmd()
+        {
+            ProcessStartInfo start = new ProcessStartInfo();
+            start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\emotion_analysis.py", "");
+            start.UseShellExecute = false;
+            start.RedirectStandardOutput = true;
+            using (Process process = Process.Start(start))
+            {
+                using (System.IO.StreamReader reader = process.StandardOutput)
+                {
+                    string result = reader.ReadToEnd();
+                    Console.Write(result);
+                }
+            }
         }
 
         [STAThread]

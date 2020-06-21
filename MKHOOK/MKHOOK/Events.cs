@@ -7,6 +7,9 @@ using System.Web.Script.Serialization;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace MKHOOK
 {
@@ -32,6 +35,7 @@ namespace MKHOOK
         private System.Timers.Timer mtimer;
         private WordsFile wordsFile;
         private int a = 0;
+        private bool pressedKey = false;
         public Events()
         {
             keyboard = new Keyboard();
@@ -53,6 +57,7 @@ namespace MKHOOK
             mtimer.Elapsed += new ElapsedEventHandler(mtimerElapsed);
             mtimer.Start();
             startTime = DateTime.Now;
+            Console.WriteLine("Python Starting2");
         }
         private void mtimerElapsed(object sender, System.EventArgs e)
         {
@@ -74,7 +79,7 @@ namespace MKHOOK
                 {
                     firstTime = false;
                     string fileName = "infoActivity-" + DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss") + ".json";
-                    pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug", fileName);
+                    pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\infoActivity", fileName);
                     using (System.IO.FileStream fs = System.IO.File.Create(pathString))
                     { }
                     Console.WriteLine("Path to my file: {0}\n", pathString);
@@ -116,8 +121,8 @@ namespace MKHOOK
                 {
                     File.WriteAllText(pathString, outputJSON);
                     Console.WriteLine("Escrito JSON");
+
                 }
-                startTime = DateTime.Now;
 
                 //RESET
 
@@ -260,7 +265,8 @@ namespace MKHOOK
             //keyboard.setWords(keyboard.getWords() + e.KeyCode.ToString());
             keyboard.isScapeKey(e);
             keyboard.keyDown();
-            wordsFile.write(e.KeyCode.ToString());
+            wordsFile.write(e.KeyCode.ToString(),false);
+            pressedKey = true;
 
         }
 
@@ -290,6 +296,11 @@ namespace MKHOOK
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
             mouse.setClicks(mouse.getClicks() + 1);
+            if (pressedKey)
+            {
+                wordsFile.write("", true);
+                pressedKey = false;
+            }
         }
 
         private void OnMouseDoubleClick(object sender, MouseEventArgs e)

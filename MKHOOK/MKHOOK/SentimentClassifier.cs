@@ -72,7 +72,7 @@ namespace MKHOOK
 
         public static TrainTestData LoadData(MLContext mlContext)
         {
-            var dataPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\sentimientos.txt";
+            var dataPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\sentimientos2.txt";
             dataView = mlContext.Data.LoadFromTextFile<SentimentData>(dataPath, hasHeader: false);
             TrainTestData splitDataView = mlContext.Data.TrainTestSplit(dataView, testFraction: 0.2);
             return splitDataView;
