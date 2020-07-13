@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 
 namespace MKHOOK
@@ -33,8 +32,6 @@ namespace MKHOOK
         private System.Windows.Forms.ContextMenu contextMenu1;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
-        private System.Windows.Forms.MenuItem menuItem3;
-        private System.Windows.Forms.MenuItem menuItem4;
         private System.Windows.Forms.MenuItem menuItem5;
         private Label label1;
         private TextBox textBox1;
@@ -65,8 +62,6 @@ namespace MKHOOK
             this.contextMenu1 = new System.Windows.Forms.ContextMenu();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
-            this.menuItem3 = new System.Windows.Forms.MenuItem();
-            this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
 
             // Initialize menuItem1
@@ -78,16 +73,6 @@ namespace MKHOOK
             this.menuItem2.Index = 0;
             this.menuItem2.Text = "Alarm";
             this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
-
-            // Initialize menuItem3
-            this.menuItem3.Index = 0;
-            this.menuItem3.Text = "Train the model";
-            this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
-
-            // Initialize menuItem4
-            this.menuItem4.Index = 0;
-            this.menuItem4.Text = "Classification";
-            this.menuItem4.Click += new System.EventHandler(this.menuItem4_Click);
 
             // Initialize menuItem5
             this.menuItem5.Index = 0;
@@ -102,14 +87,6 @@ namespace MKHOOK
             // Initialize contextMenu1
             this.contextMenu1.MenuItems.AddRange(
                         new System.Windows.Forms.MenuItem[] { this.menuItem2 });
-
-            // Initialize contextMenu3
-            this.contextMenu1.MenuItems.AddRange(
-                        new System.Windows.Forms.MenuItem[] { this.menuItem3 });
-
-            // Initialize contextMenu4
-            this.contextMenu1.MenuItems.AddRange(
-                        new System.Windows.Forms.MenuItem[] { this.menuItem4 });
 
             // Initialize contextMenu5
             this.contextMenu1.MenuItems.AddRange(
@@ -158,31 +135,9 @@ namespace MKHOOK
             alarm.Show();
         }
 
-        private void menuItem3_Click(object Sender, EventArgs e)
-        {
-            SentimentClassifier sentiment = new SentimentClassifier();
-            Thread th1 = new Thread(new ThreadStart(sentiment.trainClassifier));
-            th1.Start();
-            th1.Join();
-
-        }
-
-        private void menuItem4_Click(object Sender, EventArgs e)
-        {
-            SentimentClassifier sentiment = new SentimentClassifier();
-            Thread th1 = new Thread(new ThreadStart(sentiment.trainedClassifier));
-            th1.Start();
-            th1.Join();
-
-        }
-
         private void menuItem5_Click(object Sender, EventArgs e)
         {
             // Close the form, which closes the application.
-            SentimentClassifier sentiment = new SentimentClassifier();
-            Thread th1 = new Thread(new ThreadStart(sentiment.trainedClassifier));
-            th1.Start();
-            th1.Join();
             Application.Exit();
         }
 
@@ -200,9 +155,9 @@ namespace MKHOOK
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(77, 80);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(124, 13);
+            this.label1.Size = new System.Drawing.Size(103, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Sample Time per second";
+            this.label1.Text = "Samples per second";
             // 
             // textBox1
             // 
@@ -263,7 +218,7 @@ namespace MKHOOK
         {
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
-            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\emotion_analysis.py", "");
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\graphics_emotions.py", "");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             using (Process process = Process.Start(start))
@@ -275,7 +230,6 @@ namespace MKHOOK
                 }
             }
         }
-
         [STAThread]
         private static void Main()
         {

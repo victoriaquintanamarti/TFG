@@ -55,7 +55,7 @@ namespace MKHOOK
         /// <value> Número de teclas que ha pulsado un usuario cada cierto tiempo.</value>
         public int PressedKeys { get; set; }
         /// <value> Número de veces que un usuario ha pulsado la tecla "ESC".</value>
-        public int ScapeKey { get; set; }
+        public int BackSpaceKey { get; set; }
         /// <value> Número de veces que un usuario ha pulsado dos teclas a la vez. </value>
         public int TwoPressedKeys { get; set; }
     }

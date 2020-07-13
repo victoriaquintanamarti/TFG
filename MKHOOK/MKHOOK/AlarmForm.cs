@@ -45,8 +45,8 @@ namespace MKHOOK
         private Events events;
         public event System.ComponentModel.ProgressChangedEventHandler LoadProgressChanged;
 
-        private string keyPressedAlarm = "10";
-        private string scapeKeyAlarm = "10";
+        private string keyPressedAlarm = "100";
+        private string backSpaceKeyAlarm = "10";
         private string twoPressedKeysAlarm = "10";
         private string mouseClicksAlarm = "20";
         private string euclideanDistanceAlarm = "10000";
@@ -58,12 +58,15 @@ namespace MKHOOK
         private Label label15;
         private Label label16;
         private Label label17;
+        private PictureBox pictureBox4;
+        private Label label18;
         private string outputJSON;
+        string workingDirectory = Environment.CurrentDirectory;
 
-        public AlarmForm(Events events)
+    public AlarmForm(Events events)
         {
-            string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm+ ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            string docPath = workingDirectory;
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm+ ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
             this.events = events;
             InitializeComponent();
@@ -72,16 +75,21 @@ namespace MKHOOK
             timer.Elapsed += new ElapsedEventHandler(timerElapsed);
             timer.Start();
             CheckForIllegalCrossThreadCalls = false;
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                run_heatmap();
+            }).Start();
         }
         private NotifyIcon create_notification(String text)
         {
             var notification = new System.Windows.Forms.NotifyIcon()
             {
                 Visible = true,
-                Icon = System.Drawing.SystemIcons.Exclamation,
-                BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Warning,
-                BalloonTipTitle = "Alerta",
-                BalloonTipText = "Alerta de" + text,
+                Icon = System.Drawing.SystemIcons.Information,
+                BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info,
+                BalloonTipTitle = "Información",
+                BalloonTipText = "Es un buen momento para tomarse un descaso.",
             };
             return notification;
         }
@@ -89,7 +97,23 @@ namespace MKHOOK
         {
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
-            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\grafica_mouse.py", "");
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\graphics_mk.py", "");
+            start.UseShellExecute = false;
+            start.RedirectStandardOutput = true;
+            using (Process process = Process.Start(start))
+            {
+                using (System.IO.StreamReader reader = process.StandardOutput)
+                {
+                    string result = reader.ReadToEnd();
+                    Console.Write(result);
+                }
+            }
+        }
+        public void run_heatmap()
+        {
+            ProcessStartInfo start = new ProcessStartInfo();
+            start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\heatmap.py", "");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             using (Process process = Process.Start(start))
@@ -103,20 +127,13 @@ namespace MKHOOK
         }
         private void timerElapsed(object sender, System.EventArgs e)
         {
-            var notification = new System.Windows.Forms.NotifyIcon()
-            {
-                Visible = true,
-                Icon = System.Drawing.SystemIcons.Exclamation,
-                //BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Warning,
-                BalloonTipTitle = "Alerta",
-                BalloonTipText = "Alerta de",
-            };
+            var notification = new System.Windows.Forms.NotifyIcon();
 
             label7.Text = Convert.ToString(events.getKeyboard().getPressedKeys());
             if (Convert.ToInt32(label7.Text) > Convert.ToInt32(keyPressedAlarm))
             {
                 label7.ForeColor = Color.Red;
-                notification = create_notification(" keyPressedAlarm");
+                notification = create_notification(" Se han pulsado demasiadas teclas.");
                 notification.ShowBalloonTip(1000);
                 notification.Dispose();
             }
@@ -125,11 +142,11 @@ namespace MKHOOK
                 label7.ForeColor = Color.Green;
             }
             label7.Refresh();
-            label8.Text = Convert.ToString(events.getKeyboard().getScapeKey());
-            if (Convert.ToInt32(label8.Text) > Convert.ToInt32(scapeKeyAlarm))
+            label8.Text = Convert.ToString(events.getKeyboard().getbackSpaceKey());
+            if (Convert.ToInt32(label8.Text) > Convert.ToInt32(backSpaceKeyAlarm))
             {
                 label8.ForeColor = Color.Red;
-                notification = create_notification(" scapeKeyAlarm");
+                notification = create_notification(" Se ha pulsado demasiadas veces la tecla de retroceso.");
                 notification.ShowBalloonTip(1000);
                 notification.Dispose();
             }
@@ -142,7 +159,7 @@ namespace MKHOOK
             if (Convert.ToInt32(label9.Text) > Convert.ToInt32(twoPressedKeysAlarm))
             {
                 label9.ForeColor = Color.Red;
-                notification = create_notification(" twoPressedKeysAlarm");
+                notification = create_notification(" Se han pulsado demasiadas veces dos teclas.");
                 notification.ShowBalloonTip(1000);
                 notification.Dispose();
             }
@@ -154,8 +171,6 @@ namespace MKHOOK
             label10.Text = Convert.ToString(events.getMouse().getClicks());
             if (Convert.ToInt32(label10.Text) > Convert.ToInt32(mouseClicksAlarm))
             {
-                Console.WriteLine("ffffffffffffffffff" + label10.Text);
-                Console.WriteLine("ffffffffffffffffff" + mouseClicksAlarm);
                 label10.ForeColor = Color.Red;
                 notification = create_notification(" mouseClicksAlarm");
                 notification.ShowBalloonTip(1000);
@@ -170,7 +185,7 @@ namespace MKHOOK
             if (Convert.ToDouble(label11.Text) > Convert.ToDouble(euclideanDistanceAlarm))
             {
                 label11.ForeColor = Color.Red;
-                notification = create_notification(" euclideanDistanceAlarm");
+                notification = create_notification(" Se ha hecho movimientos con el ratón muy bruscos.");
                 notification.ShowBalloonTip(1000);
                 notification.Dispose();
             }
@@ -183,7 +198,7 @@ namespace MKHOOK
             if (Convert.ToInt32(label12.Text) > Convert.ToInt32(mouseWheelAlarm))
             {
                 label12.ForeColor = Color.Red;
-                notification = create_notification(" mouseWheelAlarm");
+                notification = create_notification(" Se han hecho demasiados cambios de dirección con la rueda del ratón.");
                 notification.ShowBalloonTip(1000);
                 //notification.Dispose();
             }
@@ -200,6 +215,7 @@ namespace MKHOOK
             ImageForm_Load();
             ImageForm_Load_mouse();
             ImageForm_Load_keyboard();
+            ImageForm_Load_heatmap();
 
         }
 
@@ -233,15 +249,18 @@ namespace MKHOOK
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.label18 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(537, 270);
+            this.label6.Location = new System.Drawing.Point(181, 279);
             this.label6.Name = "label6";
             this.label6.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.label6.Size = new System.Drawing.Size(99, 13);
@@ -251,7 +270,7 @@ namespace MKHOOK
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(537, 238);
+            this.label5.Location = new System.Drawing.Point(181, 247);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(125, 13);
             this.label5.TabIndex = 10;
@@ -260,7 +279,7 @@ namespace MKHOOK
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(537, 205);
+            this.label4.Location = new System.Drawing.Point(181, 214);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(96, 13);
             this.label4.TabIndex = 9;
@@ -269,7 +288,7 @@ namespace MKHOOK
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(537, 172);
+            this.label3.Location = new System.Drawing.Point(181, 181);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(118, 13);
             this.label3.TabIndex = 8;
@@ -278,16 +297,16 @@ namespace MKHOOK
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(537, 137);
+            this.label2.Location = new System.Drawing.Point(181, 146);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.Size = new System.Drawing.Size(92, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "ScapeKey Alarm";
+            this.label2.Text = "BackSpace Alarm";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(537, 104);
+            this.label1.Location = new System.Drawing.Point(181, 113);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(97, 13);
             this.label1.TabIndex = 6;
@@ -295,16 +314,16 @@ namespace MKHOOK
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(719, 102);
+            this.textBox1.Location = new System.Drawing.Point(363, 111);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(91, 20);
             this.textBox1.TabIndex = 12;
-            this.textBox1.Text = "10";
+            this.textBox1.Text = "100";
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(719, 132);
+            this.textBox2.Location = new System.Drawing.Point(363, 141);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(91, 20);
             this.textBox2.TabIndex = 13;
@@ -313,7 +332,7 @@ namespace MKHOOK
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(719, 167);
+            this.textBox3.Location = new System.Drawing.Point(363, 176);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(91, 20);
             this.textBox3.TabIndex = 14;
@@ -322,7 +341,7 @@ namespace MKHOOK
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(719, 200);
+            this.textBox4.Location = new System.Drawing.Point(363, 209);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(91, 20);
             this.textBox4.TabIndex = 17;
@@ -331,7 +350,7 @@ namespace MKHOOK
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(719, 231);
+            this.textBox5.Location = new System.Drawing.Point(363, 240);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(91, 20);
             this.textBox5.TabIndex = 16;
@@ -340,7 +359,7 @@ namespace MKHOOK
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(719, 263);
+            this.textBox6.Location = new System.Drawing.Point(363, 272);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(91, 20);
             this.textBox6.TabIndex = 15;
@@ -350,7 +369,7 @@ namespace MKHOOK
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(868, 102);
+            this.label7.Location = new System.Drawing.Point(512, 111);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(97, 13);
             this.label7.TabIndex = 24;
@@ -359,16 +378,16 @@ namespace MKHOOK
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(869, 135);
+            this.label8.Location = new System.Drawing.Point(513, 144);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(85, 13);
+            this.label8.Size = new System.Drawing.Size(92, 13);
             this.label8.TabIndex = 25;
-            this.label8.Text = "ScapeKey Alarm";
+            this.label8.Text = "BackSpace Alarm";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(869, 167);
+            this.label9.Location = new System.Drawing.Point(513, 176);
             this.label9.Name = "label9";
             this.label9.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.label9.Size = new System.Drawing.Size(118, 13);
@@ -378,7 +397,7 @@ namespace MKHOOK
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(869, 200);
+            this.label10.Location = new System.Drawing.Point(513, 209);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(96, 13);
             this.label10.TabIndex = 30;
@@ -387,7 +406,7 @@ namespace MKHOOK
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(869, 236);
+            this.label11.Location = new System.Drawing.Point(513, 245);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(125, 13);
             this.label11.TabIndex = 29;
@@ -396,7 +415,7 @@ namespace MKHOOK
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(868, 268);
+            this.label12.Location = new System.Drawing.Point(512, 277);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(99, 13);
             this.label12.TabIndex = 28;
@@ -405,7 +424,7 @@ namespace MKHOOK
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(869, 59);
+            this.label13.Location = new System.Drawing.Point(513, 68);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(79, 13);
             this.label13.TabIndex = 27;
@@ -414,7 +433,7 @@ namespace MKHOOK
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(736, 59);
+            this.label14.Location = new System.Drawing.Point(380, 68);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(33, 13);
             this.label14.TabIndex = 26;
@@ -422,7 +441,7 @@ namespace MKHOOK
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(719, 311);
+            this.button1.Location = new System.Drawing.Point(363, 320);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 32;
@@ -481,15 +500,36 @@ namespace MKHOOK
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(1233, 758);
+            this.label17.Location = new System.Drawing.Point(1234, 758);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(52, 13);
             this.label17.TabIndex = 40;
             this.label17.Text = "Keyboard";
             // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
+            this.pictureBox4.Location = new System.Drawing.Point(776, 113);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(609, 167);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox4.TabIndex = 41;
+            this.pictureBox4.TabStop = false;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(1059, 68);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(50, 13);
+            this.label18.TabIndex = 42;
+            this.label18.Text = "Heatmap";
+            // 
             // AlarmForm
             // 
-            this.ClientSize = new System.Drawing.Size(1489, 834);
+            this.ClientSize = new System.Drawing.Size(1489, 819);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
@@ -521,6 +561,7 @@ namespace MKHOOK
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -574,6 +615,23 @@ namespace MKHOOK
             }
         }
 
+        private void ImageForm_Load_heatmap()
+        {
+            var directory = new DirectoryInfo(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\heatmap");
+            var myFile = (from f in directory.GetFiles()
+                          orderby f.LastWriteTime descending
+                          select f).First();
+            pictureBox4.ImageLocation = myFile.FullName;
+            var name = myFile.FullName;
+            var dirPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\heatmap";
+            foreach (string file in Directory.GetFiles(dirPath))
+            {
+                FileInfo fi = new FileInfo(file);
+                if (fi.FullName != name)
+                    fi.Delete();
+            }
+        }
+
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.Hide();
@@ -583,16 +641,16 @@ namespace MKHOOK
         {
             keyPressedAlarm = textBox1.Text;
             string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
 
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            scapeKeyAlarm = textBox2.Text;
+            backSpaceKeyAlarm = textBox2.Text;
             string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
         }
 
@@ -600,7 +658,7 @@ namespace MKHOOK
         {
             twoPressedKeysAlarm = textBox3.Text;
             string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
         }
 
@@ -608,7 +666,7 @@ namespace MKHOOK
         {
             mouseClicksAlarm = textBox4.Text;
             string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
         }
 
@@ -616,7 +674,7 @@ namespace MKHOOK
         {
             euclideanDistanceAlarm = textBox5.Text;
             string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
         }
 
@@ -624,7 +682,7 @@ namespace MKHOOK
         {
             mouseWheelAlarm = textBox6.Text;
             string docPath = @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug";
-            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"scapeKeyAlarm\":" + scapeKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
+            outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm + ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
             File.WriteAllText(Path.Combine(docPath, "alarms.json"), outputJSON);
         }
 

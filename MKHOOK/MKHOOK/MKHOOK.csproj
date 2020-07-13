@@ -337,7 +337,6 @@
     <Compile Include="AlarmForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CoreNLP.cs" />
     <Compile Include="Events.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -347,7 +346,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SentimentClassifier.cs" />
     <Compile Include="WordsFile.cs" />
     <Compile Include="Keyboard.cs" />
     <Compile Include="Mouse.cs" />

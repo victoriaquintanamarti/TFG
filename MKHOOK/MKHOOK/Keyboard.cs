@@ -15,7 +15,7 @@ namespace MKHOOK
         /// <value> Número de teclas pulsadas </value>
         private int pressedKeys;
         /// <value> Número de veces que se ha pulsado la tecla ESC </value>
-        private int scapeKey;
+        private int backSpaceKey;
         /// <value> Número de veces que se ha pulsado dos teclas a la vez </value>
         private int twoKeyPressed;
         /// <value> Teclas que se han pulsado. </value>
@@ -33,7 +33,7 @@ namespace MKHOOK
         public Keyboard()
         {
             pressedKeys = 0;
-            scapeKey = 0;
+            backSpaceKey = 0;
             twoKeyPressed = 0;
             words = "";
 
@@ -41,11 +41,11 @@ namespace MKHOOK
         /// <summary>
         /// Constructor de la clase que inicializa las variables.
         /// </summary>
-        public void isScapeKey(KeyEventArgs e)
+        public void isbackSpaceKey(KeyEventArgs e)
         {
             if (e.KeyCode.ToString() == "Back")
             {
-                scapeKey++;
+                backSpaceKey++;
             }
         }
         public void keyDown()
@@ -75,9 +75,9 @@ namespace MKHOOK
         {
             this.pressedKeys = pressedKeys;
         }
-        public void setScapeKey(int scapeKey)
+        public void setbackSpaceKey(int backSpaceKey)
         {
-            this.scapeKey = scapeKey;
+            this.backSpaceKey = backSpaceKey;
         }
         public void setWords(string words)
         {
@@ -87,9 +87,9 @@ namespace MKHOOK
         {
             return pressedKeys;
         }
-        public int getScapeKey()
+        public int getbackSpaceKey()
         {
-            return scapeKey;
+            return backSpaceKey;
         }
         public string getWords()
         {
@@ -98,7 +98,7 @@ namespace MKHOOK
         public void stats()
         {
             Console.WriteLine("Pressed keys: " + getPressedKeys());
-            Console.WriteLine("Scape keys: " + getScapeKey());
+            Console.WriteLine("Scape keys: " + getbackSpaceKey());
             Console.WriteLine("Words: " + getWords());
             Console.WriteLine("Two pressed keys: " + getTwoPressedKeys());
         }

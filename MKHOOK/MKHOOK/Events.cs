@@ -105,7 +105,7 @@ namespace MKHOOK
                 activity.Keyboard = new KeyboardStats()
                 {
                     PressedKeys = keyboard.getPressedKeys(),
-                    ScapeKey = keyboard.getScapeKey(),
+                    BackSpaceKey = keyboard.getbackSpaceKey(),
                     TwoPressedKeys = keyboard.getTwoPressedKeys()
 
                 };
@@ -127,7 +127,7 @@ namespace MKHOOK
                 //RESET
 
                 keyboard.setPressedKeys(0);
-                keyboard.setScapeKey(0);
+                keyboard.setbackSpaceKey(0);
                 keyboard.setTwoPressedKeys(0);
                 mouse.setClicks(0);
                 mouse.setSumDistances(0);
@@ -170,7 +170,7 @@ namespace MKHOOK
         public bool checkJson()
         {
             if ((keyboard.getPressedKeys() == 0) &&
-                (keyboard.getScapeKey() == 0) &&
+                (keyboard.getbackSpaceKey() == 0) &&
                 (keyboard.getTwoPressedKeys() == 0) &&
                 (mouse.getClicks() == 0) &&
                 (mouse.getSumDistances() == 0) &&
@@ -212,13 +212,8 @@ namespace MKHOOK
 
             m_Events.MouseMove += HookManager_MouseMove;
 
-            m_Events.MouseDragStarted += OnMouseDragStarted;
-            m_Events.MouseDragFinished += OnMouseDragFinished;
-
 
             m_Events.MouseWheelExt += HookManager_MouseWheelExt;
-
-            m_Events.MouseDownExt += HookManager_Supress;
 
         }
 
@@ -234,14 +229,8 @@ namespace MKHOOK
 
             m_Events.MouseMove -= HookManager_MouseMove;
 
-            m_Events.MouseDragStarted -= OnMouseDragStarted;
-            m_Events.MouseDragFinished -= OnMouseDragFinished;
-
 
             m_Events.MouseWheelExt -= HookManager_MouseWheelExt;
-
-
-            m_Events.MouseDownExt -= HookManager_Supress;
 
             m_Events.Dispose();
             m_Events = null;
@@ -263,7 +252,7 @@ namespace MKHOOK
         {
             keyboard.setPressedKeys(keyboard.getPressedKeys() + 1);
             //keyboard.setWords(keyboard.getWords() + e.KeyCode.ToString());
-            keyboard.isScapeKey(e);
+            keyboard.isbackSpaceKey(e);
             keyboard.keyDown();
             wordsFile.write(e.KeyCode.ToString(),false);
             pressedKey = true;
