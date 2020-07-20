@@ -63,7 +63,7 @@ namespace MKHOOK
         private string outputJSON;
         string workingDirectory = Environment.CurrentDirectory;
 
-    public AlarmForm(Events events)
+        public AlarmForm(Events events)
         {
             string docPath = workingDirectory;
             outputJSON = "{ \"keyPressedAlarm\":" + keyPressedAlarm + ",\"backSpaceKeyAlarm\":" + backSpaceKeyAlarm+ ",\"twoPressedKeysAlarm\":" + twoPressedKeysAlarm + ",\"mouseClicksAlarm\":" + mouseClicksAlarm + ",\"euclideanDistanceAlarm\":" + euclideanDistanceAlarm + ",\"mouseWheelAlarm\":" + mouseWheelAlarm + "}";
@@ -97,7 +97,7 @@ namespace MKHOOK
         {
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
-            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\graphics_mk.py", "");
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\graphics_mk.py", "");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             using (Process process = Process.Start(start))
@@ -113,7 +113,7 @@ namespace MKHOOK
         {
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
-            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\heatmap.py", "");
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\heatmap.py", "");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             using (Process process = Process.Start(start))
@@ -135,7 +135,7 @@ namespace MKHOOK
                 label7.ForeColor = Color.Red;
                 notification = create_notification(" Se han pulsado demasiadas teclas.");
                 notification.ShowBalloonTip(1000);
-                notification.Dispose();
+                
             }
             else
             {
@@ -148,7 +148,7 @@ namespace MKHOOK
                 label8.ForeColor = Color.Red;
                 notification = create_notification(" Se ha pulsado demasiadas veces la tecla de retroceso.");
                 notification.ShowBalloonTip(1000);
-                notification.Dispose();
+                
             }
             else
             {
@@ -161,7 +161,7 @@ namespace MKHOOK
                 label9.ForeColor = Color.Red;
                 notification = create_notification(" Se han pulsado demasiadas veces dos teclas.");
                 notification.ShowBalloonTip(1000);
-                notification.Dispose();
+                
             }
             else
             {
@@ -174,7 +174,7 @@ namespace MKHOOK
                 label10.ForeColor = Color.Red;
                 notification = create_notification(" mouseClicksAlarm");
                 notification.ShowBalloonTip(1000);
-                notification.Dispose();
+                
             }
             else
             {
@@ -187,7 +187,7 @@ namespace MKHOOK
                 label11.ForeColor = Color.Red;
                 notification = create_notification(" Se ha hecho movimientos con el ratón muy bruscos.");
                 notification.ShowBalloonTip(1000);
-                notification.Dispose();
+                
             }
             else
             {
@@ -200,7 +200,7 @@ namespace MKHOOK
                 label12.ForeColor = Color.Red;
                 notification = create_notification(" Se han hecho demasiados cambios de dirección con la rueda del ratón.");
                 notification.ShowBalloonTip(1000);
-                //notification.Dispose();
+                
             }
             else
             {
@@ -216,6 +216,19 @@ namespace MKHOOK
             ImageForm_Load_mouse();
             ImageForm_Load_keyboard();
             ImageForm_Load_heatmap();
+            /*string filetext = File.ReadAllText(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\proba.txt");
+            List<string> listProba= filetext.Select(c => c.ToString()).ToList();
+            List<int> intList = listProba.ConvertAll(int.Parse);
+            Console.WriteLine(intList);
+            int result = intList.Find(item => item > 40);
+            Console.WriteLine(result);
+            if (result != 0){
+                label11.ForeColor = Color.Red;
+                notification = create_notification(" Se ha hecho movimientos con el ratón muy bruscos.");
+                notification.ShowBalloonTip(1000);
+                
+            }
+            */
 
         }
 

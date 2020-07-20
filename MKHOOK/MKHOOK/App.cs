@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,6 +43,7 @@ namespace MKHOOK
         private Events events1;
         private AlarmForm alarm;
         public event System.Windows.Forms.FormClosingEventHandler FormClosing;
+        string workingDirectory = Environment.CurrentDirectory;
 
         public App(Events events)
         {
@@ -107,22 +109,7 @@ namespace MKHOOK
             // in a tooltip, when the mouse hovers over the systray icon.
             notifyIcon1.Text = "MouseKeyHok";
             notifyIcon1.Visible = true;
-
-            /*// Handle the DoubleClick event to activate the form.
-            notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
-            notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);*/
         }
-        /*
-        private void notifyIcon1_Click(object Sender, EventArgs e)
-        {
-            InitializeComponent();
-            this.Show();
-        }
-
-        private void notifyIcon1_DoubleClick(object Sender, EventArgs e)
-        {
-            MessageBox.Show("Double clicked");
-        }*/
 
         private void menuItem1_Click(object Sender, EventArgs e)
         {
@@ -138,6 +125,12 @@ namespace MKHOOK
         private void menuItem5_Click(object Sender, EventArgs e)
         {
             // Close the form, which closes the application.
+            var processes = Process.GetProcesses().Where(pr => pr.ProcessName == "python");
+            foreach (var process in processes)
+            {
+                process.Kill();
+            }
+            Environment.Exit(Environment.ExitCode);
             Application.Exit();
         }
 
@@ -218,7 +211,7 @@ namespace MKHOOK
         {
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = @"C:\Users\Victoria\AppData\Local\Programs\Python\Python38-32\python.exe";
-            start.Arguments = string.Format("{0} {1}", @"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\pruebaEmoTXT\graphics_emotions.py", "");
+            start.Arguments = string.Format("{0} {1}", workingDirectory +"/graphics_emotions.py", "");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             using (Process process = Process.Start(start))
@@ -231,8 +224,14 @@ namespace MKHOOK
             }
         }
         [STAThread]
+        [DllImport("user32.dll")]
+        private static extern int ShowWindow(int Handle, int showState);
+        [DllImport("kernel32.dll")]
+        public static extern int GetConsoleWindow();
         private static void Main()
         {
+            int win = GetConsoleWindow();
+            ShowWindow(win, 0);
             Events events; 
             events = new Events();
             App app = new App(events);

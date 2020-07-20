@@ -36,6 +36,7 @@ namespace MKHOOK
         private WordsFile wordsFile;
         private int a = 0;
         private bool pressedKey = false;
+        string workingDirectory = Environment.CurrentDirectory;
         public Events()
         {
             keyboard = new Keyboard();
@@ -79,7 +80,7 @@ namespace MKHOOK
                 {
                     firstTime = false;
                     string fileName = "infoActivity-" + DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss") + ".json";
-                    pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\infoActivity", fileName);
+                    pathString = System.IO.Path.Combine(workingDirectory + "/infoActivity", fileName);
                     using (System.IO.FileStream fs = System.IO.File.Create(pathString))
                     { }
                     Console.WriteLine("Path to my file: {0}\n", pathString);

@@ -1,0 +1,1 @@
+Sentiment: RECO | Prediction: Positive | Probability: 0,6253365

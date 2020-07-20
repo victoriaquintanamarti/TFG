@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MKHOOK</name>
+    </assembly>
+    <members>
+        <member name="T:MKHOOK.AlarmForm">
+            <summary>
+            Clase que despliega un formulario que contiene un resumen con los parámetros que se están midiendo en cada momento 
+            y en donde se establece el valor que puede tomar cada parámetro para considerarse anómalo. 
+            Cuando algún parámetro tome el valor que se ha puesto como anómalo se pondrá en rojo. 
+            En cambio si no es anómalo, aparecerá de color verde.
+            </summary>
+        </member>
+        <member name="T:MKHOOK.JsonClass">
+            <summary>
+            Clase que define la estructura que tendrá el fichero JSON que contiene toda la información acerca de los parámetros 
+            que se van a medir, para poder detectar si se está produciendo una anomalía o no en el comportamiento del usuario.
+            </summary>
+        </member>
+        <member name="P:MKHOOK.JsonClass.TimeActivityPerSecond">
+            <value> Periodo de tiempo en el que se recoge la actividad del usuario. </value>
+        </member>
+        <member name="P:MKHOOK.JsonClass.MouseSamplePerSecond">
+            <value> Periodo de tiempo en el que se recoge cuál ha sido el uso del ratón. </value>
+        </member>
+        <member name="P:MKHOOK.JsonClass.Activity">
+            <value> Lista con las estadísticas de actividad del usuario.</value>
+        </member>
+        <member name="T:MKHOOK.ActivityStats">
+            <summary>
+            Clase que contiene todos los parámetros que se van a medir sobre la actividad del usuario cada cierto tiempo.
+            </summary>
+            
+        </member>
+        <member name="P:MKHOOK.ActivityStats.Time">
+            <value> Tiempo en el que se se ha medido la actividad del usuario </value>
+        </member>
+        <member name="P:MKHOOK.ActivityStats.Keyboard">
+            <value> Actividad del usuario con el uso del teclado  </value>
+        </member>
+        <member name="P:MKHOOK.ActivityStats.Mouse">
+            <value> Actividad del usuario con el uso del ratón  </value>
+        </member>
+        <member name="T:MKHOOK.TimeStats">
+            <summary>
+            Clase que define cada cuanto se mide la actividad del usuario.
+            </summary>
+            
+        </member>
+        <member name="P:MKHOOK.TimeStats.TimeElapsed">
+            <value> Momento en el que se midió la actividad del usuario.</value>
+        </member>
+        <member name="T:MKHOOK.KeyboardStats">
+            <summary>
+            Clase que recoge la actividad que realiza un usuario utilizando el teclado.
+            </summary>
+            
+        </member>
+        <member name="P:MKHOOK.KeyboardStats.PressedKeys">
+            <value> Número de teclas que ha pulsado un usuario cada cierto tiempo.</value>
+        </member>
+        <member name="P:MKHOOK.KeyboardStats.BackSpaceKey">
+            <value> Número de veces que un usuario ha pulsado la tecla "ESC".</value>
+        </member>
+        <member name="P:MKHOOK.KeyboardStats.TwoPressedKeys">
+            <value> Número de veces que un usuario ha pulsado dos teclas a la vez. </value>
+        </member>
+        <member name="T:MKHOOK.MouseStats">
+            <summary>
+            Clase que recoge la actividad que realiza un usuario utilizando el ratón.
+            </summary>
+            
+        </member>
+        <member name="P:MKHOOK.MouseStats.MouseClicks">
+            <value> Número de clicks que se ha realizado con el ratón en un periodo de tiempo. </value>
+        </member>
+        <member name="P:MKHOOK.MouseStats.EuclideanDistance">
+            <value> Distancia euclídea que ha recorrido el ratón un periodo de tiempo. </value>
+        </member>
+        <member name="P:MKHOOK.MouseStats.MouseWheel">
+            <value> Número de veces que se ha usado la rueda del ratón un periodo de tiempo. </value>
+        </member>
+        <member name="T:MKHOOK.Properties.Resources">
+            <summary>
+              Clase de recurso fuertemente tipado, para buscar cadenas traducidas, etc.
+            </summary>
+        </member>
+        <member name="P:MKHOOK.Properties.Resources.ResourceManager">
+            <summary>
+              Devuelve la instancia de ResourceManager almacenada en caché utilizada por esta clase.
+            </summary>
+        </member>
+        <member name="P:MKHOOK.Properties.Resources.Culture">
+            <summary>
+              Reemplaza la propiedad CurrentUICulture del subproceso actual para todas las
+              búsquedas de recursos mediante esta clase de recurso fuertemente tipado.
+            </summary>
+        </member>
+        <member name="P:MKHOOK.Properties.Resources.emotions_chart">
+            <summary>
+              Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="T:MKHOOK.Keyboard">
+            <summary>
+            Clase que recoge los parámetros que se van a medir del teclado para poder determinar si se está teniendo un comportamiento anómalo.
+            </summary>
+        </member>
+        <member name="F:MKHOOK.Keyboard.pressedKeys">
+            <value> Número de teclas pulsadas </value>
+        </member>
+        <member name="F:MKHOOK.Keyboard.backSpaceKey">
+            <value> Número de veces que se ha pulsado la tecla ESC </value>
+        </member>
+        <member name="F:MKHOOK.Keyboard.twoKeyPressed">
+            <value> Número de veces que se ha pulsado dos teclas a la vez </value>
+        </member>
+        <member name="F:MKHOOK.Keyboard.words">
+            <value> Teclas que se han pulsado. </value>
+        </member>
+        <member name="F:MKHOOK.Keyboard.keydown">
+            <value> Booleano para controlar si se han pulsado dos teclas a la vez. </value>
+        </member>
+        <member name="F:MKHOOK.Keyboard.startTime">
+            <value> Tiempo en el que se inicia la medición. </value>
+        </member>
+        <member name="F:MKHOOK.Keyboard.timeElapsed">
+            <value> Tiempo que ha transcurrido. </value>
+        </member>
+        <member name="M:MKHOOK.Keyboard.#ctor">
+            <summary>
+            Constructor de la clase que inicializa las variables.
+            </summary>
+        </member>
+        <member name="M:MKHOOK.Keyboard.isbackSpaceKey(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Constructor de la clase que inicializa las variables.
+            </summary>
+        </member>
+        <member name="T:MKHOOK.App">
+            <summary>
+            Clase principal que orquesta todas las funciones que realiza el programa. Cuando se ejecuta, aparece un icono 
+            de notificación en la barrra de tareas, la cual indica que el programa se está ejecutando en background. Una vez el 
+            programa se esté ejecutando, se estarán recogiendo todos los parámetros para poder detectar si se está produciendo alguna
+            anomalía en el comportamiento del usuario. 
+            Dependiendo de la opción que se escoja cuando se pulse en el icono de notificación, se podrán realizar las acciones siguientes:
+            - Config: al pulsar en esta opción se desplegará un formulario en el que se podrá cambiar
+            cada cuanto quiere que se realice el muestreo de ratón y de teclado en general.
+            - Alarm: si se escoge esta opción, se desplegará un formulario que contiene un resumen con los parámetros 
+            que se están midiendo en cada momento y en donde se establece el valor que puede tomar 
+            cada parámetro para considerarse anómalo. 
+            Cuando algún parámetro tome el valor que se ha puesto como anómalo se pondrá en rojo. 
+            En cambio si no es anómalo, aparecerá de color verde.
+            - Train the model: 
+            </summary>
+        </member>
+    </members>
+</doc>

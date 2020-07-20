@@ -1,0 +1,36 @@
+{
+  "TimeActivityPerSecond": "10",
+  "MouseSamplePerSecond": "10",
+  "Activity": [
+    {
+      "Time": {
+        "TimeElapsed": "20/07/2020 18:10:21"
+      },
+      "Keyboard": {
+        "PressedKeys": 13,
+        "BackSpaceKey": 0,
+        "TwoPressedKeys": 0
+      },
+      "Mouse": {
+        "MouseClicks": 3,
+        "EuclideanDistance": 16427.796759176825,
+        "MouseWheel": 0
+      }
+    },
+    {
+      "Time": {
+        "TimeElapsed": "20/07/2020 18:10:31"
+      },
+      "Keyboard": {
+        "PressedKeys": 0,
+        "BackSpaceKey": 0,
+        "TwoPressedKeys": 0
+      },
+      "Mouse": {
+        "MouseClicks": 3,
+        "EuclideanDistance": 6663.0071351158786,
+        "MouseWheel": 0
+      }
+    }
+  ]
+}

@@ -13,17 +13,12 @@ namespace MKHOOK
         private string pathString2;
         private Events events;
         private string words = "";
+        string workingDirectory = Environment.CurrentDirectory;
         //private int specialCharacters = 0;
 
         public WordsFile(Events events)
         {
             this.events = events;
-            pathString = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\words.txt");
-            using (System.IO.FileStream fs = System.IO.File.Create(pathString))
-            { }
-            pathString2 = System.IO.Path.Combine(@"C:\Users\Victoria\Documents\IngenieríaInformática\TFG\TFG\MKHOOK\MKHOOK\bin\x86\Debug\words2.txt");
-            using (System.IO.FileStream fs = System.IO.File.Create(pathString2))
-            { }
         }
         public void write(string newWords, bool newLine)
         {
@@ -39,7 +34,7 @@ namespace MKHOOK
                 else if (newWords == "Return")
                 {
                     words = words + "\r\n";
-                    File.WriteAllText(pathString2, words);
+                    File.WriteAllText(workingDirectory +"/words2.txt", words);
             }
                 else if (newWords == "Oem7" || newWords == "Oem1" || newWords == "OemQuestion")
                 {
@@ -59,13 +54,13 @@ namespace MKHOOK
                 }
                 else if (newLine == true)
                 {
-                    File.WriteAllText(pathString2, words);
+                    File.WriteAllText(workingDirectory +"/words2.txt", words);
                 }
                 else
                 {
                     words = words + newWords;
                 }
-                File.WriteAllText(pathString, words);
+            File.WriteAllText(workingDirectory +"/words.txt", words);
         }
     }
 }
